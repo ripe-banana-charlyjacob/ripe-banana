@@ -18,4 +18,10 @@ describe('Studio Model', () => {
         data._id = vision8._id;
         assert.deepEqual(vision8.toJSON(), data);
     });
+
+    it('requires fields', () => {
+        const studio = new Studio({});
+        const errors = getErrors(studio.validateSync(), 1);
+        assert.equal(errors.name.kind, 'required');
+    });
 });
