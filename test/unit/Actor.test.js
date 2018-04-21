@@ -1,5 +1,6 @@
 const { assert } = require('chai');
 const Actor = require('../../lib/models/Actor');
+const { getErrors } = require('./helpers');
 
 describe('Actor Model', () => {
     
@@ -14,5 +15,11 @@ describe('Actor Model', () => {
         data._id = helen._id;
         data.dob = helen.dob;
         assert.deepEqual(helen.toJSON(), data);
+    });
+
+    it('requires fields', () => {
+        const actor = new Actor({});
+        const errors = getErrors(actor.validateSync(), 1);
+        assert.equal(errors.name.kind, 'required');
     });
 });
