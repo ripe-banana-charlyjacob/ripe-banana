@@ -12,10 +12,10 @@ describe('Film Model', () => {
             released: 2018,
             cast: [{ part: 'Boss', actor: Types.ObjectId() }]
         };
+        
         const dogs = new Film(data);
         
         data._id = dogs._id;
-        console.log(data.cast[0]);
         data.cast[0]._id = dogs.cast[0]._id;
         assert.deepEqual(dogs.toJSON(), data);
         assert.isUndefined(dogs.validateSync());
