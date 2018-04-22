@@ -10,17 +10,22 @@ describe('Film Model', () => {
             title: 'Isle of Dogs',
             studio: Types.ObjectId(),
             released: 2018,
-            cast: [{
-                actor: Types.ObjectId(),
-                part: 'Boss'
-            }]
+            cast: [{ part: 'Boss', actor: Types.ObjectId() }]
         };
-        const dogs = new Film();
+        
+        const dogs = new Film(data);
         
         data._id = dogs._id;
-        console.log(data.cast[0]);
-        // data.cast[0].actor = dogs.cast[0].actor;
+        data.cast[0]._id = dogs.cast[0]._id;
         assert.deepEqual(dogs.toJSON(), data);
         assert.isUndefined(dogs.validateSync());
+    });
+
+    it('requires fields', () => {
+        const film = new Film({});
+        const errors = getErrors(film.validateSync(), 3);
+        assert.equal(errors.released.kind, 'required');
+        assert.equal(errors.studio.kind, 'required');
+        assert.equal(errors.title.kind, 'required');
     });
 });
