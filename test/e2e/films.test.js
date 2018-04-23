@@ -27,6 +27,7 @@ describe('Films API', () => {
             .send(studio)
             .then(({ body }) => {
                 studio = body;
+                console.log(studio._id);
             });
     });
 
