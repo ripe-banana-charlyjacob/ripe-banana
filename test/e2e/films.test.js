@@ -6,6 +6,7 @@ const { Types } = require('mongoose');
 describe('Films API', () => {
     before(() => dropCollection('films'));
     before(() => dropCollection('studios'));
+    before(() => dropCollection('actors'));
 
     const checkOk = res => {
         if(!res.ok) throw res.error;
@@ -41,5 +42,21 @@ describe('Films API', () => {
         studio: studio._id,
         released: 2000,
         cast: [{ part: 'bad guy', actor: Types.ObjectId() }]
-    }
+    };
+
+    it('saves a film', () => {
+        return request.post('/films')
+            .send(film)
+            .then(checkOk)
+            .then(({ body }) => {
+                const { _id, __v } = body;
+                assert.ok(_id);
+                assert.equal(__v, 0);
+                assert.deepEqual(body, {
+                    ...film,
+                    _id, __v
+                });
+                film = body;
+            });
+    });
 });

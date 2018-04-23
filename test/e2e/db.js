@@ -1,8 +1,8 @@
-require('dotenv').config({ MONGODB_URI: './test/e2e/.env' });
-const connect = require('../../lib/connect');
+require('dotenv').config({ path: './test/e2e/.env' }); // change 'path' to 'MONGODB_URI' for windows. Turn in as path.
+const connect = require('../../lib/util/connect');
 const mongoose = require('mongoose');
 
-before(() => connect.process.env.MONGODB_URI || 'mongobd://localhost:27017/ripe-banana_test');
+before(() => connect(process.env.MONGODB_URI));
 after(() => mongoose.connection.close());
 
 module.exports = {
