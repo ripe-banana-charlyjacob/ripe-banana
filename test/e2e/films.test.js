@@ -3,7 +3,7 @@ const request = require('./request');
 const { dropCollection } = require('./db');
 const { Types } = require('mongoose');
 
-describe('Films API', () => {
+describe.skip('Films API', () => {
     before(() => dropCollection('films'));
     before(() => dropCollection('studios'));
     before(() => dropCollection('actors'));
@@ -38,12 +38,12 @@ describe('Films API', () => {
         cast: [{ part: 'Amelie', actor: Types.ObjectId() }]
     };
 
-    let film2 = {
-        title: 'Cats and Dogs',
-        studio: studio._id,
-        released: 2000,
-        cast: [{ part: 'bad guy', actor: Types.ObjectId() }]
-    };
+    // let film2 = {
+    //     title: 'Cats and Dogs',
+    //     studio: studio._id,
+    //     released: 2000,
+    //     cast: [{ part: 'bad guy', actor: Types.ObjectId() }]
+    // };
 
     it('saves a film', () => {
         return request.post('/films')
