@@ -23,7 +23,7 @@ describe('Films API', () => {
     };
 
     before(() => {
-        return request.post('./studios')
+        return request.post('/studios')
             .send(studio)
             .then(({ body }) => {
                 studio = body;
