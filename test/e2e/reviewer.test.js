@@ -36,4 +36,17 @@ describe('Reviewers', () => {
             });
     });
 
+    it('gets a reviewer by id', () => {
+        return request.post('/ripe-banana/reviewers')
+            .send(armond)
+            .then(checkOk)
+            .then(({ body }) => {
+                armond = body;
+                return request.get(`/ripe-banana/reviewers/${armond._id}`);
+            })
+            .then(({ body }) => {
+                assert.deepEqual(body, armond);
+            });
+    });
+
 });
