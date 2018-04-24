@@ -2,13 +2,12 @@ const { assert } = require('chai');
 const request = require('./request');
 const { dropCollection } = require('./db');
 const { Types } = require('mongoose');
-const Actor = require('../../lib/models/Actor');
 
 describe.only('Actors API', () => {
     before(() => dropCollection('actors'));
     before(() => dropCollection('films'));
 
-    const roundTrip = doc => JSON.parse(JSON.stringify(doc.toJSON()));
+    // const roundTrip = doc => JSON.parse(JSON.stringify(doc.toJSON()));
     const getFields = ({ _id, name }) => ({ _id, name });
 
     let helen = {
@@ -79,7 +78,6 @@ describe.only('Actors API', () => {
                 return request.get(`/ripe-banana/actors/${bruce._id}`);
             })
             .then(({ body }) => {
-                console.log('********** end body: ', body); //internal server error
                 assert.deepEqual(body.films[0].title, film.title);
             });
     });
