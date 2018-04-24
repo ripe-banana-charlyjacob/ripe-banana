@@ -12,10 +12,11 @@
             "args": [
                 "-u",
                 "tdd",
+                "--recursive",
                 "--timeout",
                 "999999",
                 "--colors",
-                "${workspaceFolder}/test/e2e/films.test"
+                "${workspaceFolder}/test"
             ],
             "internalConsoleOptions": "openOnSessionStart"
         },
