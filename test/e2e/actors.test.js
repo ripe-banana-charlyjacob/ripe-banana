@@ -23,14 +23,6 @@ describe.only('Actors API', () => {
         pob: 'West Germany'
     };
 
-    // before(() => {
-    //     return request.post('/ripe-banana/films')
-    //         .send(film)
-    //         .then(({ body }) => {
-    //             film = body;
-    //         });
-    // });
-
     const checkOk = res => {
         if(!res.ok) throw res.error;
         return res;
