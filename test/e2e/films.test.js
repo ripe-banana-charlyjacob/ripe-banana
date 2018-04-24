@@ -3,7 +3,7 @@ const request = require('./request');
 const { dropCollection } = require('./db');
 const { Types } = require('mongoose');
 
-describe('Films API', () => {
+describe.skip('Films API', () => {
     before(() => dropCollection('films'));
     before(() => dropCollection('studios'));
     before(() => dropCollection('actors'));
