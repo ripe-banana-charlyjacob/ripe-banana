@@ -2,20 +2,24 @@ const { assert } = require('chai');
 const request = require('./request');
 const { dropCollection } = require('./db');
 const { Types } = require('mongoose');
+const Actor = require('../../lib/models/Actor');
 
-describe('Actors API', () => {
+describe.only('Actors API', () => {
     before(() => dropCollection('actors'));
     before(() => dropCollection('films'));
 
+    const roundTrip = doc => JSON.parse(JSON.stringify(doc.toJSON()));
+    const getFields = ({ _id, name }) => ({ _id, name });
+
     let helen = {
         name: 'Helen Mirren',
-        dob: '07.26.1947',
+        dob: new Date(1947, 7, 26).toJSON(),
         pob: 'London, England'
     };
 
     let bruce = {
         name: 'Bruce Willis',
-        dob: '03.19.1955',
+        dob: new Date(1955, 3, 19).toJSON(),
         pob: 'West Germany'
     };
     let film = {
@@ -24,14 +28,6 @@ describe('Actors API', () => {
         released: 2018,
         cast: []
     };
-
-    before(() => {
-        return request.post('/ripe-banana/actors')
-            .send(helen)
-            .then(({ body }) => {
-                helen = body;
-            });
-    });
 
     before(() => {
         return request.post('/ripe-banana/films')
@@ -55,11 +51,29 @@ describe('Actors API', () => {
                 assert.ok(_id);
                 assert.equal(__v, 0);
                 assert.deepEqual(body, {
+                    ...helen,
                     _id, __v,
-                    ...helen
                 });
                 helen = body;
             });
     });
+
     film.cast = [{ role: 'none', actor: helen._id }];
+
+    it('gets all actors', () => {
+        it('get all actors', () => {
+            return Actor.create(bruce).then(roundTrip)
+                .then(saved => {
+                    bruce = saved;
+                    return request.get('/actors');
+    
+                })
+                .then(({ body }) => {
+                    assert.deepEqual(body, [helen, bruce].map(getFields));
+                });
+    
+        });
+    });
+
+
 });
