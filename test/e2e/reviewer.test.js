@@ -11,10 +11,10 @@ describe('Reviewers', () => {
         company: 'Independant'
     };
 
-    // let eli = {
-    //     name: 'Eli Lake',
-    //     company: 'Bloomberg'
-    // };
+    let eli = {
+        name: 'Eli Lake',
+        company: 'Bloomberg'
+    };
 
     const checkOk = res => {
         if(!res.ok) throw res.error;
@@ -33,25 +33,26 @@ describe('Reviewers', () => {
                     ...armond,
                     _id, __v
                 });
+                armond = body;
             });
     });
 
     it('gets a reviewer by id', () => {
         return request.post('/ripe-banana/reviewers')
-            .send(armond)
+            .send(eli)
             .then(checkOk)
             .then(({ body }) => {
-                armond = body;
-                return request.get(`/ripe-banana/reviewers/${armond._id}`);
+                eli = body;
+                return request.get(`/ripe-banana/reviewers/${eli._id}`);
             })
             .then(({ body }) => {
-                assert.deepEqual(body, armond);
+                assert.deepEqual(body, eli);
             });
     });
-
+        
     it('update a reviewer', () => {
         armond.company = 'sony';
-
+        
         return request.put(`/ripe-banana/reviewers/${armond._id}`)
             .send(armond)
             .then(checkOk)
@@ -64,4 +65,32 @@ describe('Reviewers', () => {
             });
     });
 
+    const getFields = ({ _id, name }) => ({ _id, name });
+    
+    it('gets all reviewers _id and name', () => {
+        return request.get('/ripe-banana/reviewers')
+            .then(checkOk)
+            .then(({ body }) => {
+                assert.deepEqual(body, [armond, eli].map(getFields));
+            });
+    });
+    
+    it('deletes a reviewer', () => {
+        return request.delete(`/ripe-banana/reviewers/${armond._id}`)
+            .then(() => {
+                return request.get(`/ripe-banana/reviewers/${armond._id}`);
+            })
+            .then(res => {
+                assert.equal(res.status, 404);
+            });
+    });
+
+    it('returns 404', () => {
+        return request.get(`/ripe-banana/reviewers/${armond._id}`)
+            .then(response => {
+                assert.equal(response.status, 404);
+                assert.match(response.body.error, new RegExp(armond._id));
+            });
+    });
+    
 });
