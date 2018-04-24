@@ -52,17 +52,19 @@ describe.only('Actors API', () => {
             });
     });
 
-    it('get all actors', () => {
+    before(() => {
         return request.post('/ripe-banana/actors')
             .send(bruce)
-            .then(saved => {
-                bruce = saved;
-            })
-            .then(() => {
-                request.get('/ripe-banana/actors')
-                    .then(({ body }) => {
-                        assert.deepEqual(body, [helen, bruce].map(getFields));
-                    });
+            .then(checkOk)
+            .then(({ body }) => {
+                bruce = body;
+            });
+    });
+
+    it('gets all actors', () => {
+        request.get('/ripe-banana/actors')
+            .then(({ body }) => {
+                assert.deepEqual(body, [bruce, helen].map(getFields));
             });
     });
     
@@ -85,7 +87,7 @@ describe.only('Actors API', () => {
                 return request.get(`/ripe-banana/actors/${bruce._id}`);
             })
             .then(({ body }) => {
-                console.log('********** end body: ', body);
+                console.log('********** end body: ', body); //internal server error
                 assert.deepEqual(body.films[0].title, film.title);
             });
     });
