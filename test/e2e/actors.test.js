@@ -22,20 +22,14 @@ describe.only('Actors API', () => {
         dob: new Date(1955, 3, 19).toJSON(),
         pob: 'West Germany'
     };
-    let film = {
-        title: 'Isle of Dogs',
-        studio: Types.ObjectId(),
-        released: 2018,
-        cast: []
-    };
 
-    before(() => {
-        return request.post('/ripe-banana/films')
-            .send(film)
-            .then(({ body }) => {
-                film = body;
-            });
-    });
+    // before(() => {
+    //     return request.post('/ripe-banana/films')
+    //         .send(film)
+    //         .then(({ body }) => {
+    //             film = body;
+    //         });
+    // });
 
     const checkOk = res => {
         if(!res.ok) throw res.error;
@@ -58,22 +52,39 @@ describe.only('Actors API', () => {
             });
     });
 
-    film.cast = [{ role: 'none', actor: helen._id }];
-
-    it('gets all actors', () => {
-        it('get all actors', () => {
-            return Actor.create(bruce).then(roundTrip)
-                .then(saved => {
-                    bruce = saved;
-                    return request.get('/actors');
-    
-                })
-                .then(({ body }) => {
-                    assert.deepEqual(body, [helen, bruce].map(getFields));
-                });
-    
-        });
+    it('get all actors', () => {
+        return Actor.create(bruce).then(roundTrip)
+            .then(saved => {
+                bruce = saved;
+                return request.get('/ripe-banana/actors');
+            })
+            .then(({ body }) => {
+                assert.deepEqual(body, [helen, bruce].map(getFields));
+            });
     });
-
+    
+    it('gets an actor and their films by id', () => {
+        let film = {
+            title: 'Isle of Dogs',
+            studio: Types.ObjectId(),
+            released: 2018,
+            cast: [{
+                part: 'none',
+                actor: bruce._id
+            }]
+        };
+        return request.post('/ripe-banana/films')
+            .send(film)
+            .then(({ body }) => {
+                film = body;
+            })
+            .then(() => {
+                return request.get(`/ripe-banana/actors/${bruce._id}`);
+            })
+            .then(({ body }) => {
+                console.log('********** end body: ', body);
+                assert.deepEqual(body.films[0].title, film.title);
+            });
+    });
 
 });
