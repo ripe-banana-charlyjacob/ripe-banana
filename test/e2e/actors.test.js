@@ -53,13 +53,16 @@ describe.only('Actors API', () => {
     });
 
     it('get all actors', () => {
-        return Actor.create(bruce).then(roundTrip)
+        return request.post('/ripe-banana/actors')
+            .send(bruce)
             .then(saved => {
                 bruce = saved;
-                return request.get('/ripe-banana/actors');
             })
-            .then(({ body }) => {
-                assert.deepEqual(body, [helen, bruce].map(getFields));
+            .then(() => {
+                request.get('/ripe-banana/actors')
+                    .then(({ body }) => {
+                        assert.deepEqual(body, [helen, bruce].map(getFields));
+                    });
             });
     });
     
