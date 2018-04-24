@@ -49,4 +49,19 @@ describe('Reviewers', () => {
             });
     });
 
+    it('update a reviewer', () => {
+        armond.company = 'sony';
+
+        return request.put(`/ripe-banana/reviewers/${armond._id}`)
+            .send(armond)
+            .then(checkOk)
+            .then(({ body }) => {
+                assert.deepEqual(body, armond);
+                return request.get(`/ripe-banana/reviewers/${armond._id}`);
+            })
+            .then(({ body }) => {
+                assert.deepEqual(body, armond);
+            });
+    });
+
 });
