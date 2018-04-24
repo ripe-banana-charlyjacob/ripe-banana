@@ -12,5 +12,5 @@ connect(MONGODB_URI);
 const server = http.createServer(app);
 
 server.listen(PORT, () => {
-    console.log('server running on: ', server.address().port);
+    console.log('Server running on: ', server.address().port);
 });
