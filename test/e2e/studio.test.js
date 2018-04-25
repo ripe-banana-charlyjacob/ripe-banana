@@ -4,8 +4,6 @@ const { dropCollection } = require('./db');
 
 describe('Studios', () => {
 
-    before(() => dropCollection('studios'));
-
     let studioOne = {
         name: 'Studio One',
         address: {
@@ -24,15 +22,12 @@ describe('Studios', () => {
         }
     };
 
-    const checkOk = res => {
-        if(!res.ok) throw res.error;
-        return res;
-    };
+    before(() => dropCollection('studios'));
+    before(() => dropCollection('films'));
 
     it('post studio', () => {
         return request.post('/ripe-banana/studios')
             .send(studioOne)
-            .then(checkOk)
             .then(({ body }) => {
                 const { _id, __v } = body;
                 assert.ok(_id);
@@ -45,41 +40,42 @@ describe('Studios', () => {
             });
     });
 
+    const getFields = ({ _id, name }) => ({ _id, name });
+    
     it('gets a studio by id', () => {
         return request.post('/ripe-banana/studios')
             .send(studioTwo)
-            .then(checkOk)
             .then(({ body }) => {
                 studioTwo = body;
-                return request.get(`/ripe-banana/studios/${studioTwo._id}`);
+                return request.get('/ripe-banana/studios');
             })
-            .then(({ body }) => {
-                assert.deepEqual(body, studioTwo);
-            });
-    });
-        
-    it('update a studio', () => {
-        studioOne.address.city = 'Roscoe';
-        
-        return request.put(`/ripe-banana/studios/${studioOne._id}`)
-            .send(studioOne)
-            .then(checkOk)
-            .then(({ body }) => {
-                assert.deepEqual(body, studioOne);
-                return request.get(`/ripe-banana/studios/${studioOne._id}`);
-            })
-            .then(({ body }) => {
-                assert.deepEqual(body, studioOne);
-            });
-    });
-
-    const getFields = ({ _id, name }) => ({ _id, name });
-    
-    it('gets all studios _id and name', () => {
-        return request.get('/ripe-banana/studios')
-            .then(checkOk)
             .then(({ body }) => {
                 assert.deepEqual(body, [studioOne, studioTwo].map(getFields));
+            });
+    });
+    
+    it('get a studio by id', () => {
+        let pan = {
+            title: 'Pan',
+            studio: studioOne._id,
+            released: 2000,
+            cast: []
+        };
+
+        return request.post('/films')
+            .send(pan)
+            .then(({ body }) => {
+                pan = body;
+                return request.get(`studios/${studioOne._id}`);
+            })
+            .then(({ body }) => {
+                assert.deepEqual(body, {
+                    ...studioOne,
+                    films: [{
+                        _id: pan._id,
+                        title: pan.title
+                    }]
+                });
             });
     });
     
