@@ -1,30 +1,42 @@
-// const { assert } = require('chai');
-// const request = require('./request');
-// const { dropCollection } = require('./db');
+const { assert } = require('chai');
+const request = require('./request');
+const { dropCollection } = require('./db');
+// const Actor = require('../../lib/models/Actor');
+// const { Types } = require('mongoose');
 
-// describe('Actors API', () => {
-//     before(() => dropCollection('actors'));
-//     before(() => dropCollection('films'));
-//     before(() => dropCollection('studios'));
+describe('Actor API', () => {
+    
+    before (() => dropCollection('actors'));
 
-//     let helen = {
-//         name: 'Helen Mirren',
-//         dob: '07.26.1947',
-//         pob: 'London, England'
-//     };
+    let jermaine = {
+        name: 'Jermaine Clement',
+        dob: new Date(1999, 9, 9).toJSON(),
+        pob: 'Auckland, NZ'
+    };
 
-//     let bruce = {
-//         name: 'Bruce Willis',
-//         dob: '03.19.1955',
-//         pob: 'West Germany'
-//     };
+    // let bret = {
+    //     name: 'Bret Mackenzie',
+    //     dob: new Date(1888, 8, 8).toJSON(),
+    //     pob: 'Nelson, NZ'
+    // };
 
-//     const checkOk = res => {
-//         if(!res.ok) throw res.error;
-//         return res;
-//     };
+    // const roundTrip = doc => JSON.parse(JSON.stringify(doc.toJSON()));
+    // const getFields = ({ _id, name }) => ({ _id, name });
 
-//     before(() => {
-        
-//     });
-// });
+    it('saves an actor', () => {
+        return request.post('/ripe-banana/actors')
+            .send(jermaine)
+            .then(({ body }) => {
+                const { _id, __v } = body;
+                assert.ok(_id);
+                assert.equal(__v, 0);
+                assert.deepEqual(body, {
+                    ...jermaine,
+                    _id,
+                    __v
+                });
+                jermaine = body;
+            });
+    });
+
+});
